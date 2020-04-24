@@ -1,5 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <stdio.h>
 #include "SGP4.h"
 #include "structmember.h"
 
@@ -117,6 +118,8 @@ Satrec_twoline2rv(PyTypeObject *cls, PyObject *args)
     if (!self)
         return NULL;
 
+    // memset(&self->satrec, 0, sizeof(elsetrec));
+
     SGP4Funcs::twoline2rv(line1, line2, ' ', ' ', 'i', whichconst,
                           dummy, dummy, dummy, self->satrec);
 
@@ -133,11 +136,21 @@ Satrec_twoline2rv(PyTypeObject *cls, PyObject *args)
     return (PyObject*) self;
 }
 
+int my_printf(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    if (!strcmp(format, "%f\n"))
+        format = "%.17g\n";
+    int result = vprintf(format, args);
+    va_end(args);
+    return result;
+}
+
 static PyObject *
 Satrec_sgp4init(PyObject *self, PyObject *args)
 {
-    gravconsttype whichconst;
-    char opsmode;
+    int whichconst;  /* "int" rather than "gravconsttype" so we know size */
+    int opsmode;     /* "int" rather than "char" because "C" needs an int */
     long int satnum;
     double epoch, bstar, ndot, nddot;
     double ecco, argpo, inclo, mo, no_kozai, nodeo;
@@ -149,8 +162,29 @@ Satrec_sgp4init(PyObject *self, PyObject *args)
 
     elsetrec &satrec = ((SatrecObject*) self)->satrec;
 
-    SGP4Funcs::sgp4init(wgs72, opsmode, satnum, epoch, bstar, ndot, nddot,
-                        ecco, argpo, inclo, mo, no_kozai, nodeo, satrec);
+    // memset(&satrec, 0, sizeof(elsetrec));
+
+    if (((int) whichconst) == 99) {
+      satrec.epochdays = 179.784951;
+      satrec.classification = 'U';
+      strcpy(satrec.intldesg, "58002B");
+      satrec.elnum = 475;
+      satrec.revnum = 41366;
+
+      static int count = 1;
+      printf("start%d\n", count);
+      __builtin_dump_struct(&satrec, &my_printf);
+      printf("end%d\n", count);
+      count ++;
+      fflush(stdout);
+      Py_INCREF(Py_None);
+      return Py_None;
+    }
+
+    printf("=( %d == %d )= ", whichconst, satnum);
+    SGP4Funcs::sgp4init((gravconsttype) whichconst, opsmode, satnum, epoch,
+                        bstar, ndot, nddot, ecco, argpo, inclo, mo, no_kozai,
+                        nodeo, satrec);
 
     /* Populate jdsatepoch and jdsatepochF as SGP4Funcs::twoline2rv does */
     satrec.jdsatepochF = modf(epoch, &satrec.jdsatepoch);

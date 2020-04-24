@@ -1363,6 +1363,7 @@ namespace SGP4Funcs
 		const double xnodeo, elsetrec& satrec
 		)
 	{
+          printf("sgp4init called with epoch = %.17g\n", epoch);
 		/* --------------------- local variables ------------------------ */
 		double ao, ainv, con42, cosio, sinio, cosio2, eccsq,
 			omeosq, posq, rp, rteosq,
@@ -1742,6 +1743,8 @@ namespace SGP4Funcs
 		double r[3], double v[3]
 		)
 	{
+          printf("sgp4 called with tsince = %.17g\n", tsince);
+
 		double am, axnl, aynl, betal, cosim, cnod,
 			cos2u, coseo1, cosi, cosip, cosisq, cossu, cosu,
 			delm, delomg, em, emsq, ecose, el2, eo1,
