@@ -10,7 +10,7 @@ satdoc = dedent(sgp4.model.Satellite.__doc__.split('\n', 1)[1])
 long_description = long_description.replace('entry.', 'entry.' + satdoc)
 
 # Force compilation on Travis CI + Python 3 to make sure it keeps working.
-optional = True
+optional = False
 if sys.version_info[0] != 2 and os.environ.get('TRAVIS') == 'true':
     optional = False
 
