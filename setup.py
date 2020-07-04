@@ -34,26 +34,30 @@ def get_compile_args():
 
     elif 'darwin' in platform.system().lower():
 
-        extra_compile_args = [
-            '-fopenmp', '-O3',  # '-std=c++11',
-            '-mmacosx-version-min=10.7',
-            ]
+        # extra_compile_args = [
+        #     '-fopenmp', '-O3',  # '-std=c++11',
+        #     # '-mmacosx-version-min=10.7',
+        #     ]
 
         from subprocess import getoutput
-        if 'clang' in getoutput('gcc -v'):
+        if 'clang' in getoutput('{:s} -v'.format(
+                '$CXX' if 'CXX' in os.environ else 'gcc')
+                ):
             # see https://iscinumpy.gitlab.io/post/omp-on-high-sierra/
             extra_compile_args = [
                 # need:
                 # export CFLAGS="-Xpreprocessor -fopenmp $CFLAGS"
                 # export CXXFLAGS="-Xpreprocessor -fopenmp $CXXFLAGS"
-                '-lomp', '-O3',  # '-std=c++11',
-                '-mmacosx-version-min=10.7',
+                '-O3',  # '-std=c++11',
+                # '-lomp', '-mmacosx-version-min=10.7',
                 ]
+
         # if c++11 stdlib support is necessary and clang compiler is used
         # if 'clang' in getoutput('gcc -v'):
         #     extra_compile_args += ['-stdlib=libc++', ]
 
-        comp_args['extra_compile_args'] = extra_compile_args
+            comp_args['extra_compile_args'] = extra_compile_args
+            del comp_args['extra_link_args']
 
     return comp_args
 

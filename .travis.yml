@@ -40,10 +40,14 @@ jobs:
         - gcc --version
         - brew update
         - brew install llvm libomp
+        - brew --prefix libomp
         - gcc --version
+        - $CXX --version
       env:
       #   - CIBW_BEFORE_BUILD="brew update; brew install libomp"
         - PATH="/usr/local/opt/llvm/bin:$PATH"
+        - CC='/usr/local/opt/llvm/bin/clang'
+        - CXX='/usr/local/opt/llvm/bin/clang++'
         - LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib -L/usr/local/opt/libffi/lib"
         - CPPFLAGS="-I/usr/local/opt/llvm/include -I/usr/local/opt/libffi/include"
 
