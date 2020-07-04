@@ -5,11 +5,13 @@ language: python
 
 jobs:
   include:
+
     # perform a linux build
     - name: "Linux Python 3.5"
       python: 3.5
       # os: linux
       # services: docker
+
     # and a mac build
     - name: "MacOS clang vanilla Python 2.7"
       os: osx
@@ -17,19 +19,36 @@ jobs:
       language: shell
       env:
         - COMPILER='clang'
+
     - name: "MacOS clang vanilla Python 3.7"
       os: osx
       osx_image: xcode11.2  # Python 3.7.4
       language: shell
       env:
         - COMPILER='clang'
+
     - name: "MacOS gcc"
       os: osx
       osx_image: xcode11.2  # Python 3.7.4
       language: shell
       env:
         - COMPILER='gcc'
+
     # and a windows build
+    - name: "Windows Python 2.7"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 2.7.0
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+
+    - name: "Windows Python 3.5"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.5.0
+        - export PATH="/c/Python35:/c/Python35/Scripts:$PATH"
+
     - name: "Windows Python 3.8"
       os: windows
       language: shell
@@ -59,9 +78,9 @@ script:
   # itself, allowing "io.py" to shadow the real io module and thereby
   # causing failure when NumPy tries to import.
   - python -m sgp4.tests
-  - pyflakes $(find sgp4/ -name '*.py')
-  - |-
-    if grep ' $' $(find extension/ sgp4/ -type f) ;then echo ERROR: TRAILING WHITESPACE; exit 0 ;fi
+  # - pyflakes $(find sgp4/ -name '*.py')
+  # - |-
+  #   if grep ' $' $(find extension/ sgp4/ -type f) ;then echo ERROR: TRAILING WHITESPACE; exit 0 ;fi
 
 after_success:
   - python -m pip install twine cibuildwheel==1.1.0
