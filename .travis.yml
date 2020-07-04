@@ -27,7 +27,7 @@ jobs:
       env:
         - COMPILER='clang'
 
-    - name: "MacOS gcc"
+    - name: "MacOS gcc Python 3.7"
       os: osx
       osx_image: xcode11.2  # Python 3.7.4
       language: shell
@@ -35,25 +35,25 @@ jobs:
         - COMPILER='gcc'
 
     # and a windows build
-    - name: "Windows Python 2.7"
+    - name: "Windows Python 2.7.18"
       os: windows
       language: shell
       before_install:
-        - choco install python --version 2.7.0
+        - choco install python2
         - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
     - name: "Windows Python 3.5"
       os: windows
       language: shell
       before_install:
-        - choco install python --version 3.5.0
+        - choco install python3 --version 3.5.4
         - export PATH="/c/Python35:/c/Python35/Scripts:$PATH"
 
     - name: "Windows Python 3.8"
       os: windows
       language: shell
       before_install:
-        - choco install python --version 3.8.0
+        - choco install python3 --version 3.8.0
         - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
 
 before_install:
