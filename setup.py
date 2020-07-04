@@ -24,6 +24,7 @@ def get_compile_args():
     comp_args = {
         'extra_compile_args': ['-fopenmp', '-O3'],  # , '-std=c++11'
         'extra_link_args': ['-fopenmp'],
+        # 'include_dirs': [numpy.get_include()],
         'language': 'c++',
         }
 
@@ -88,4 +89,6 @@ setup(name = 'sgp4',
       packages = ['sgp4'],
       package_data = {'sgp4': ['SGP4-VER.TLE', 'tcppver.out']},
       ext_modules = ext_modules,
+      install_requires=['numpy'],
+      tests_require=['numpy'],
 )
