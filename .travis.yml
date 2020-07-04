@@ -28,7 +28,9 @@ jobs:
         # if not installed into /usr/local/opt see
         # https://iscinumpy.gitlab.io/post/omp-on-high-sierra/
         - brew --prefix libomp
-      # env:
+      env:
+        - CFLAGS="-Xpreprocessor -fopenmp $CFLAGS"
+        - CXXFLAGS="-Xpreprocessor -fopenmp $CXXFLAGS"
       #   - CIBW_BEFORE_BUILD="brew update; brew install libomp"
 
     - name: "MacOS llvm"

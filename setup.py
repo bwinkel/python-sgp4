@@ -39,8 +39,17 @@ def get_compile_args():
             '-mmacosx-version-min=10.7',
             ]
 
+        from subprocess import getoutput
+        if 'clang' in getoutput('gcc -v'):
+            # see https://iscinumpy.gitlab.io/post/omp-on-high-sierra/
+            extra_compile_args = [
+                # need:
+                # export CFLAGS="-Xpreprocessor -fopenmp $CFLAGS"
+                # export CXXFLAGS="-Xpreprocessor -fopenmp $CXXFLAGS"
+                '-lomp', '-O3',  # '-std=c++11',
+                '-mmacosx-version-min=10.7',
+                ]
         # if c++11 stdlib support is necessary and clang compiler is used
-        # from subprocess import getoutput
         # if 'clang' in getoutput('gcc -v'):
         #     extra_compile_args += ['-stdlib=libc++', ]
 
