@@ -73,6 +73,8 @@ install:
   - "pip install pyflakes"
 
 script:
+  # check if accelerated api is available:
+  - python -c "from sgp4 import api; print('accelerated API:', api.accelerated);"
   # We invoke the tests directly instead of using "-m discover" because
   # that would set the current working directory to the "sgp4/" package
   # itself, allowing "io.py" to shadow the real io module and thereby
