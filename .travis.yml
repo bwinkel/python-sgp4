@@ -69,7 +69,8 @@ before_install:
      fi'
 
 install:
-  - "pip install -e ."
+  - "pip install -vv -e ."
+  # - "python setup.py install"
   - "pip install pyflakes"
 
 script:
