@@ -9,6 +9,7 @@ import datetime as dt
 import platform
 import re
 import sys
+import logging
 from doctest import DocTestSuite, ELLIPSIS
 from math import pi, isnan
 from pkgutil import get_data
@@ -21,6 +22,10 @@ from sgp4.propagation import sgp4, sgp4init
 from sgp4 import conveniences, io
 from sgp4.exporter import export_tle
 import sgp4.model as model
+
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+log = logging.getLogger("TestLog")
+log.debug("accelerated: {}".format(accelerated))
 
 _testcase = TestCase('setUp')
 assertEqual = _testcase.assertEqual

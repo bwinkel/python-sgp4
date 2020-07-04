@@ -6,7 +6,7 @@ env:
   global:
     # CIBW_BEFORE_TEST run before wheel installed...
     # - CIBW_BEFORE_TEST="python -c \"from sgp4 import api; print('accelerated API:', api.accelerated);\""
-    - CIBW_TEST_COMMAND='python -c "from sgp4 import api; print(\"accelerated API:\", api.accelerated);"; python -m sgp4.tests'
+    - CIBW_TEST_COMMAND="python -m sgp4.tests"
     - CIBW_BUILD_VERBOSITY=1
     - CIBW_BUILD="cp36-*"
 
@@ -21,11 +21,26 @@ jobs:
     - name: "MacOS clang vanilla"
       os: osx
       language: shell
-      # before_install:
-      #   - brew update
-      #   - brew install libomp
-      env:
-        - CIBW_BEFORE_BUILD="brew update; brew install libomp"
+      before_install:
+        - gcc --version
+        - brew update
+        - brew install libomp
+        # if not installed into /usr/local/opt see
+        # https://iscinumpy.gitlab.io/post/omp-on-high-sierra/
+        - brew --prefix libomp
+      # env:
+      #   - CIBW_BEFORE_BUILD="brew update; brew install libomp"
+
+    - name: "MacOS llvm"
+      os: osx
+      language: shell
+      before_install:
+        - gcc --version
+        - brew update
+        - brew install llvm libomp
+        - gcc --version
+      # env:
+      #   - CIBW_BEFORE_BUILD="brew update; brew install libomp"
 
     - name: "MacOS gcc"
       os: osx
