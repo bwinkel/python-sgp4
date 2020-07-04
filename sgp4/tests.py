@@ -487,7 +487,7 @@ def run_satellite_against_tcppver(twoline2rv, invoke, expected_errors):
         # precision, and so can be compared textually.
 
         if 'xx' in actual_line:
-            similar = (actual_line == expected_line)
+            similar = (actual_line.strip() == expected_line.strip())
         else:
             afields = actual_line.split()
             efields = expected_line.split()
