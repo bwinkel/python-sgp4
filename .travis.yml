@@ -1,14 +1,53 @@
 # Config file for automatic testing at travis-ci.org
 
 language: python
+language: python
 
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
+jobs:
+  include:
+    # perform a linux build
+    - name: "Linux Python 3.5"
+      python: 3.5
+      # os: linux
+      # services: docker
+    # and a mac build
+    - name: "MacOS clang vanilla Python 2.7"
+      os: osx
+      osx_image: xcode9.3  # Python 2.7.14_2
+      language: shell
+      env:
+        - COMPILER='clang'
+    - name: "MacOS clang vanilla Python 3.7"
+      os: osx
+      osx_image: xcode11.2  # Python 3.7.4
+      language: shell
+      env:
+        - COMPILER='clang'
+    - name: "MacOS gcc"
+      os: osx
+      osx_image: xcode11.2  # Python 3.7.4
+      language: shell
+      env:
+        - COMPILER='gcc'
+    # and a windows build
+    - name: "Windows Python 3.8"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ $COMPILER == "clang" ]]; then brew update; brew install libomp; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ $COMPILER == "llvm" ]]; then brew update; brew install llvm; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ $COMPILER == "gcc" ]]; then brew update; brew install gcc; brew link --overwrite gcc; fi
+  # not sure, if the following can be improved
+  - 'if [[ $TRAVIS_OS_NAME == "osx" && $COMPILER == "gcc" ]]; then
+       gcc --version;
+       gcc-6 --version && export CC="gcc-6" && export LD="gcc-6" && export LDFLAGS="-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/6/" || true;
+       gcc-7 --version && export CC="gcc-7" && export LD="gcc-7" && export LDFLAGS="-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/7/" || true;
+       gcc-8 --version && export CC="gcc-8" && export LD="gcc-8" && export LDFLAGS="-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/8/" || true;
+     fi'
 
 install:
   - "pip install -e ."
@@ -23,3 +62,8 @@ script:
   - pyflakes $(find sgp4/ -name '*.py')
   - |-
     if grep ' $' $(find extension/ sgp4/ -type f) ;then echo ERROR: TRAILING WHITESPACE; exit 0 ;fi
+
+after_success:
+  - python -m pip install twine cibuildwheel==1.1.0
+  # build the wheels, put them into './wheelhouse'
+  - python -m cibuildwheel --output-dir wheelhouse
